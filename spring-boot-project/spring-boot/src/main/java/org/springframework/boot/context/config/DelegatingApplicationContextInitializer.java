@@ -16,9 +16,6 @@
 
 package org.springframework.boot.context.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationContextInitializer;
@@ -31,6 +28,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link ApplicationContextInitializer} that delegates to other initializers that are
  * specified under a {@literal context.initializer.classes} environment property.
@@ -38,8 +38,7 @@ import org.springframework.util.StringUtils;
  * @author Dave Syer
  * @author Phillip Webb
  */
-public class DelegatingApplicationContextInitializer implements
-		ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
+public class DelegatingApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
 
 	// NOTE: Similar to org.springframework.web.context.ContextLoader
 
@@ -49,16 +48,16 @@ public class DelegatingApplicationContextInitializer implements
 
 	@Override
 	public void initialize(ConfigurableApplicationContext context) {
-		ConfigurableEnvironment environment = context.getEnvironment();
-		List<Class<?>> initializerClasses = getInitializerClasses(environment);
+		ConfigurableEnvironment environment        = context.getEnvironment();
+		List<Class<?>>          initializerClasses = getInitializerClasses(environment);
 		if (!initializerClasses.isEmpty()) {
 			applyInitializerClasses(context, initializerClasses);
 		}
 	}
 
 	private List<Class<?>> getInitializerClasses(ConfigurableEnvironment env) {
-		String classNames = env.getProperty(PROPERTY_NAME);
-		List<Class<?>> classes = new ArrayList<>();
+		String         classNames = env.getProperty(PROPERTY_NAME);
+		List<Class<?>> classes    = new ArrayList<>();
 		if (StringUtils.hasLength(classNames)) {
 			for (String className : StringUtils.tokenizeToStringArray(classNames, ",")) {
 				classes.add(getInitializerClass(className));
@@ -73,16 +72,15 @@ public class DelegatingApplicationContextInitializer implements
 					ClassUtils.getDefaultClassLoader());
 			Assert.isAssignable(ApplicationContextInitializer.class, initializerClass);
 			return initializerClass;
-		}
-		catch (ClassNotFoundException ex) {
+		} catch (ClassNotFoundException ex) {
 			throw new ApplicationContextException(
 					"Failed to load context initializer class [" + className + "]", ex);
 		}
 	}
 
-	private void applyInitializerClasses(ConfigurableApplicationContext context,
-			List<Class<?>> initializerClasses) {
+	private void applyInitializerClasses(ConfigurableApplicationContext context, List<Class<?>> initializerClasses) {
 		Class<?> contextClass = context.getClass();
+
 		List<ApplicationContextInitializer<?>> initializers = new ArrayList<>();
 		for (Class<?> initializerClass : initializerClasses) {
 			initializers.add(instantiateInitializer(contextClass, initializerClass));
@@ -91,7 +89,7 @@ public class DelegatingApplicationContextInitializer implements
 	}
 
 	private ApplicationContextInitializer<?> instantiateInitializer(Class<?> contextClass,
-			Class<?> initializerClass) {
+																	Class<?> initializerClass) {
 		Class<?> requireContextClass = GenericTypeResolver.resolveTypeArgument(
 				initializerClass, ApplicationContextInitializer.class);
 		Assert.isAssignable(requireContextClass, contextClass,
@@ -106,9 +104,9 @@ public class DelegatingApplicationContextInitializer implements
 				.instantiateClass(initializerClass);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void applyInitializers(ConfigurableApplicationContext context,
-			List<ApplicationContextInitializer<?>> initializers) {
+								   List<ApplicationContextInitializer<?>> initializers) {
 		initializers.sort(new AnnotationAwareOrderComparator());
 		for (ApplicationContextInitializer initializer : initializers) {
 			initializer.initialize(context);

@@ -16,16 +16,8 @@
 
 package org.springframework.boot.context;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -42,6 +34,13 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * {@link ApplicationContextInitializer} to report warnings for common misconfiguration
  * mistakes.
@@ -49,31 +48,28 @@ import org.springframework.util.StringUtils;
  * @author Phillip Webb
  * @since 1.2.0
  */
-public class ConfigurationWarningsApplicationContextInitializer
-		implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class ConfigurationWarningsApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-	private static final Log logger = LogFactory
-			.getLog(ConfigurationWarningsApplicationContextInitializer.class);
+	private static final Log logger = LogFactory.getLog(ConfigurationWarningsApplicationContextInitializer.class);
 
 	@Override
 	public void initialize(ConfigurableApplicationContext context) {
-		context.addBeanFactoryPostProcessor(
-				new ConfigurationWarningsPostProcessor(getChecks()));
+		context.addBeanFactoryPostProcessor(new ConfigurationWarningsPostProcessor(getChecks()));
 	}
 
 	/**
 	 * Returns the checks that should be applied.
+	 *
 	 * @return the checks to apply
 	 */
 	protected Check[] getChecks() {
-		return new Check[] { new ComponentScanPackageCheck() };
+		return new Check[]{new ComponentScanPackageCheck()};
 	}
 
 	/**
 	 * {@link BeanDefinitionRegistryPostProcessor} to report warnings.
 	 */
-	protected static final class ConfigurationWarningsPostProcessor
-			implements PriorityOrdered, BeanDefinitionRegistryPostProcessor {
+	protected static final class ConfigurationWarningsPostProcessor implements PriorityOrdered, BeanDefinitionRegistryPostProcessor {
 
 		private Check[] checks;
 
@@ -119,7 +115,9 @@ public class ConfigurationWarningsApplicationContextInitializer
 
 		/**
 		 * Returns a warning if the check fails or {@code null} if there are no problems.
+		 *
 		 * @param registry the {@link BeanDefinitionRegistry}
+		 *
 		 * @return a warning message or {@code null}
 		 */
 		String getWarning(BeanDefinitionRegistry registry);
@@ -142,7 +140,7 @@ public class ConfigurationWarningsApplicationContextInitializer
 
 		@Override
 		public String getWarning(BeanDefinitionRegistry registry) {
-			Set<String> scannedPackages = getComponentScanningPackages(registry);
+			Set<String>  scannedPackages     = getComponentScanningPackages(registry);
 			List<String> problematicPackages = getProblematicPackages(scannedPackages);
 			if (problematicPackages.isEmpty()) {
 				return null;
@@ -156,7 +154,7 @@ public class ConfigurationWarningsApplicationContextInitializer
 		protected Set<String> getComponentScanningPackages(
 				BeanDefinitionRegistry registry) {
 			Set<String> packages = new LinkedHashSet<>();
-			String[] names = registry.getBeanDefinitionNames();
+			String[]    names    = registry.getBeanDefinitionNames();
 			for (String name : names) {
 				BeanDefinition definition = registry.getBeanDefinition(name);
 				if (definition instanceof AnnotatedBeanDefinition) {
@@ -169,7 +167,7 @@ public class ConfigurationWarningsApplicationContextInitializer
 		}
 
 		private void addComponentScanningPackages(Set<String> packages,
-				AnnotationMetadata metadata) {
+												  AnnotationMetadata metadata) {
 			AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata
 					.getAnnotationAttributes(ComponentScan.class.getName(), true));
 			if (attributes != null) {

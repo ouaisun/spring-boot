@@ -16,9 +16,6 @@
 
 package org.springframework.boot.web.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +28,9 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link ApplicationContextInitializer} that sets {@link Environment} properties for the
@@ -49,9 +49,7 @@ import org.springframework.util.StringUtils;
  * @author Phillip Webb
  * @since 2.0.0
  */
-public class ServerPortInfoApplicationContextInitializer
-		implements ApplicationContextInitializer<ConfigurableApplicationContext>,
-		ApplicationListener<WebServerInitializedEvent> {
+public class ServerPortInfoApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, ApplicationListener<WebServerInitializedEvent> {
 
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
@@ -61,8 +59,7 @@ public class ServerPortInfoApplicationContextInitializer
 	@Override
 	public void onApplicationEvent(WebServerInitializedEvent event) {
 		String propertyName = "local." + getName(event.getApplicationContext()) + ".port";
-		setPortProperty(event.getApplicationContext(), propertyName,
-				event.getWebServer().getPort());
+		setPortProperty(event.getApplicationContext(), propertyName, event.getWebServer().getPort());
 	}
 
 	private String getName(WebServerApplicationContext context) {
@@ -71,10 +68,9 @@ public class ServerPortInfoApplicationContextInitializer
 	}
 
 	private void setPortProperty(ApplicationContext context, String propertyName,
-			int port) {
+								 int port) {
 		if (context instanceof ConfigurableApplicationContext) {
-			setPortProperty(((ConfigurableApplicationContext) context).getEnvironment(),
-					propertyName, port);
+			setPortProperty(((ConfigurableApplicationContext) context).getEnvironment(), propertyName, port);
 		}
 		if (context.getParent() != null) {
 			setPortProperty(context.getParent(), propertyName, port);
@@ -83,14 +79,14 @@ public class ServerPortInfoApplicationContextInitializer
 
 	@SuppressWarnings("unchecked")
 	private void setPortProperty(ConfigurableEnvironment environment, String propertyName,
-			int port) {
+								 int port) {
 		MutablePropertySources sources = environment.getPropertySources();
-		PropertySource<?> source = sources.get("server.ports");
+		PropertySource<?>      source  = sources.get("server.ports");
 		if (source == null) {
 			source = new MapPropertySource("server.ports", new HashMap<>());
 			sources.addFirst(source);
 		}
-		((Map<String, Object>) source.getSource()).put(propertyName, port);
+		((Map<String,Object>) source.getSource()).put(propertyName, port);
 	}
 
 }

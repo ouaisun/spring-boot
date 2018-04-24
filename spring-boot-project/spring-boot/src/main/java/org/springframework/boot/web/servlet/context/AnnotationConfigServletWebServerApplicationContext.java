@@ -16,10 +16,6 @@
 
 package org.springframework.boot.web.servlet.context;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -34,6 +30,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * {@link ServletWebServerApplicationContext} that accepts annotated classes as input - in
@@ -53,8 +53,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
  * @see ServletWebServerApplicationContext
  * @see AnnotationConfigWebApplicationContext
  */
-public class AnnotationConfigServletWebServerApplicationContext
-		extends ServletWebServerApplicationContext implements AnnotationConfigRegistry {
+public class AnnotationConfigServletWebServerApplicationContext extends ServletWebServerApplicationContext implements AnnotationConfigRegistry {
 
 	private final AnnotatedBeanDefinitionReader reader;
 
@@ -78,6 +77,7 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * Create a new {@link AnnotationConfigServletWebServerApplicationContext} with the
 	 * given {@code DefaultListableBeanFactory}. The context needs to be populated through
 	 * {@link #register} calls and then manually {@linkplain #refresh refreshed}.
+	 *
 	 * @param beanFactory the DefaultListableBeanFactory instance to use for this context
 	 */
 	public AnnotationConfigServletWebServerApplicationContext(
@@ -91,11 +91,11 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * Create a new {@link AnnotationConfigServletWebServerApplicationContext}, deriving
 	 * bean definitions from the given annotated classes and automatically refreshing the
 	 * context.
+	 *
 	 * @param annotatedClasses one or more annotated classes, e.g. {@code @Configuration}
-	 * classes
+	 *                         classes
 	 */
-	public AnnotationConfigServletWebServerApplicationContext(
-			Class<?>... annotatedClasses) {
+	public AnnotationConfigServletWebServerApplicationContext(Class<?>... annotatedClasses) {
 		this();
 		register(annotatedClasses);
 		refresh();
@@ -105,6 +105,7 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * Create a new {@link AnnotationConfigServletWebServerApplicationContext}, scanning
 	 * for bean definitions in the given packages and automatically refreshing the
 	 * context.
+	 *
 	 * @param basePackages the packages to check for annotated classes
 	 */
 	public AnnotationConfigServletWebServerApplicationContext(String... basePackages) {
@@ -136,7 +137,9 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * <p>
 	 * Any call to this method must occur prior to calls to {@link #register(Class...)}
 	 * and/or {@link #scan(String...)}.
+	 *
 	 * @param beanNameGenerator the bean name generator
+	 *
 	 * @see AnnotatedBeanDefinitionReader#setBeanNameGenerator
 	 * @see ClassPathBeanDefinitionScanner#setBeanNameGenerator
 	 */
@@ -155,6 +158,7 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * <p>
 	 * Any call to this method must occur prior to calls to {@link #register(Class...)}
 	 * and/or {@link #scan(String...)}.
+	 *
 	 * @param scopeMetadataResolver the scope metadata resolver
 	 */
 	public void setScopeMetadataResolver(ScopeMetadataResolver scopeMetadataResolver) {
@@ -169,22 +173,25 @@ public class AnnotationConfigServletWebServerApplicationContext
 	 * <p>
 	 * Calls to {@code #register} are idempotent; adding the same annotated class more
 	 * than once has no additional effect.
+	 *
 	 * @param annotatedClasses one or more annotated classes, e.g. {@code @Configuration}
-	 * classes
+	 *                         classes
+	 *
 	 * @see #scan(String...)
 	 * @see #refresh()
 	 */
 	@Override
 	public final void register(Class<?>... annotatedClasses) {
-		Assert.notEmpty(annotatedClasses,
-				"At least one annotated class must be specified");
+		Assert.notEmpty(annotatedClasses, "At least one annotated class must be specified");
 		this.annotatedClasses.addAll(Arrays.asList(annotatedClasses));
 	}
 
 	/**
 	 * Perform a scan within the specified base packages. Note that {@link #refresh()}
 	 * must be called in order for the context to fully process the new class.
+	 *
 	 * @param basePackages the packages to check for annotated classes
+	 *
 	 * @see #register(Class...)
 	 * @see #refresh()
 	 */
