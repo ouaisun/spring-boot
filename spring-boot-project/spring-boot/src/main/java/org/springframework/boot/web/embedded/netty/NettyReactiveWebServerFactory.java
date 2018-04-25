@@ -16,22 +16,21 @@
 
 package org.springframework.boot.web.embedded.netty;
 
-import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import reactor.ipc.netty.http.server.HttpServer;
-import reactor.ipc.netty.http.server.HttpServerOptions.Builder;
-
 import org.springframework.boot.web.reactive.server.AbstractReactiveWebServerFactory;
 import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.util.Assert;
+import reactor.ipc.netty.http.server.HttpServer;
+import reactor.ipc.netty.http.server.HttpServerOptions.Builder;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * {@link ReactiveWebServerFactory} that can be used to create {@link NettyWebServer}s.
@@ -54,15 +53,17 @@ public class NettyReactiveWebServerFactory extends AbstractReactiveWebServerFact
 
 	@Override
 	public WebServer getWebServer(HttpHandler httpHandler) {
+
 		HttpServer httpServer = createHttpServer();
-		ReactorHttpHandlerAdapter handlerAdapter = new ReactorHttpHandlerAdapter(
-				httpHandler);
+
+		ReactorHttpHandlerAdapter handlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
 		return new NettyWebServer(httpServer, handlerAdapter, this.lifecycleTimeout);
 	}
 
 	/**
 	 * Returns a mutable collection of the {@link NettyServerCustomizer}s that will be
 	 * applied to the Netty server builder.
+	 *
 	 * @return the customizers that will be applied
 	 */
 	public Collection<NettyServerCustomizer> getServerCustomizers() {
@@ -72,6 +73,7 @@ public class NettyReactiveWebServerFactory extends AbstractReactiveWebServerFact
 	/**
 	 * Set {@link NettyServerCustomizer}s that should be applied to the Netty server
 	 * builder. Calling this method will replace any existing customizers.
+	 *
 	 * @param serverCustomizers the customizers to set
 	 */
 	public void setServerCustomizers(
@@ -82,6 +84,7 @@ public class NettyReactiveWebServerFactory extends AbstractReactiveWebServerFact
 
 	/**
 	 * Add {@link NettyServerCustomizer}s that should applied while building the server.
+	 *
 	 * @param serverCustomizers the customizers to add
 	 */
 	public void addServerCustomizers(NettyServerCustomizer... serverCustomizers) {
@@ -92,6 +95,7 @@ public class NettyReactiveWebServerFactory extends AbstractReactiveWebServerFact
 	/**
 	 * Set the maximum amount of time that should be waited when starting or stopping the
 	 * server.
+	 *
 	 * @param lifecycleTimeout the lifecycle timeout
 	 */
 	public void setLifecycleTimeout(Duration lifecycleTimeout) {
@@ -102,13 +106,11 @@ public class NettyReactiveWebServerFactory extends AbstractReactiveWebServerFact
 		return HttpServer.builder().options((options) -> {
 			options.listenAddress(getListenAddress());
 			if (getSsl() != null && getSsl().isEnabled()) {
-				SslServerCustomizer sslServerCustomizer = new SslServerCustomizer(
-						getSsl(), getSslStoreProvider());
+				SslServerCustomizer sslServerCustomizer = new SslServerCustomizer(getSsl(), getSslStoreProvider());
 				sslServerCustomizer.customize(options);
 			}
 			if (getCompression() != null && getCompression().getEnabled()) {
-				CompressionCustomizer compressionCustomizer = new CompressionCustomizer(
-						getCompression());
+				CompressionCustomizer compressionCustomizer = new CompressionCustomizer(getCompression());
 				compressionCustomizer.customize(options);
 			}
 			applyCustomizers(options);

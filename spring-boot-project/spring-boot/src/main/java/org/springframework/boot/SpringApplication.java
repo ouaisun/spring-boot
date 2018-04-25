@@ -316,7 +316,7 @@ public class SpringApplication {
 		configureHeadlessProperty();
 		//通过SpringFactories 来获取时间广播 listeners ,非常重要,到时通过事件广播去触发配置好的监听器
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		//触发监听器,读取spring配置文件在这里
+		// *** 触发监听器,其中ConfigFileApplicationListener会读取spring配置文件在这里
 		listeners.starting();
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
@@ -331,7 +331,7 @@ public class SpringApplication {
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class, new Class[]{ConfigurableApplicationContext.class}, context);
 			//准备context
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
-			//spring context的核心启动流出
+			//*** spring context的核心启动流出
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
